@@ -1,4 +1,4 @@
-version: '2.2'
+version: '3'
 services:
   client01:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
@@ -8,11 +8,13 @@ services:
       - node.name=client01
       - node.data=false
       - node.master=false
-      - node.client=true
-      - bootstrap.memory_lock=true
+      - node.ingest=true
+      - xpack.security.enabled=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.zen.ping.unicast.hosts=master03,data01,data02,data03,data04,master01,master02"
     ports:
       - 9200:9200
+      - 9300:9300
     networks:
       - esnet
   data01:
@@ -23,10 +25,11 @@ services:
       - node.name=data01
       - node.data=true
       - node.master=false
-      - node.client=false
-      - http.enabled=false
+      - node.ingest=false
       - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.zen.ping.unicast.hosts=master03,data04,data02,data03,client01,master01,master02"
     ulimits:
       memlock:
         soft: -1
@@ -35,6 +38,9 @@ services:
       - esdata1:/usr/share/elasticsearch/data
     networks:
       - esnet
+    ports:
+      - 9211:9200
+      - 9311:9300
   data02:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
     container_name: data02
@@ -43,11 +49,11 @@ services:
       - node.name=data02
       - node.data=true
       - node.master=false
-      - node.client=false
-      - http.enabled=false
+      - node.ingest=false
       - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "discovery.zen.ping.unicast.hosts=data01,data03,data04"
+      - "discovery.zen.ping.unicast.hosts=master03,data01,data04,data03,client01,master01,master02"
     ulimits:
       memlock:
         soft: -1
@@ -56,6 +62,9 @@ services:
       - esdata2:/usr/share/elasticsearch/data
     networks:
       - esnet
+    ports:
+      - 9212:9200
+      - 9312:9300
   data03:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
     container_name: data03
@@ -64,11 +73,11 @@ services:
       - node.name=data03
       - node.data=true
       - node.master=false
-      - node.client=false
-      - http.enabled=false
+      - node.ingest=false
       - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "discovery.zen.ping.unicast.hosts=data01,data02,data04"
+      - "discovery.zen.ping.unicast.hosts=master03,data01,data02,data04,client01,master01,master02"
     ulimits:
       memlock:
         soft: -1
@@ -77,6 +86,9 @@ services:
       - esdata3:/usr/share/elasticsearch/data
     networks:
       - esnet
+    ports:
+      - 9213:9200
+      - 9313:9300
   data04:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
     container_name: data04
@@ -85,11 +97,11 @@ services:
       - node.name=data04
       - node.data=true
       - node.master=false
-      - node.client=false
-      - http.enabled=false
+      - node.ingest=false
       - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "discovery.zen.ping.unicast.hosts=data01,data02,data03"
+      - "discovery.zen.ping.unicast.hosts=master03,data01,data02,data03,client01,master01,master02"
     ulimits:
       memlock:
         soft: -1
@@ -98,6 +110,9 @@ services:
       - esdata4:/usr/share/elasticsearch/data
     networks:
       - esnet
+    ports:
+      - 9214:9200
+      - 9314:9300
   master01:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
     container_name: master01
@@ -106,13 +121,16 @@ services:
       - node.name=master01
       - node.data=false
       - node.master=true
-      - node.client=false
-      - http.enabled=false
-      - bootstrap.memory_lock=true
+      - node.ingest=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "discovery.zen.ping.unicast.hosts=master02,master03"
+      - xpack.security.enabled=false
+      - "discovery.zen.ping.unicast.hosts=data01, data02, data03, data04, client01, master03, master02"
     networks:
       - esnet
+    ports:
+      - 9201:9200
+      - 9301:9300
+
   master02:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
     container_name: master02
@@ -121,13 +139,15 @@ services:
       - node.name=master02
       - node.data=false
       - node.master=true
-      - node.client=false
-      - http.enabled=false
-      - bootstrap.memory_lock=true
+      - node.ingest=false
+      - xpack.security.enabled=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "discovery.zen.ping.unicast.hosts=master01,master03"
+      - "discovery.zen.ping.unicast.hosts=data01, data02, data03, data04, client01, master01, master03"
     networks:
       - esnet
+    ports:
+      - 9202:9200
+      - 9302:9300
   master03:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
     container_name: master03
@@ -136,13 +156,15 @@ services:
       - node.name=master03
       - node.data=false
       - node.master=true
-      - node.client=false
-      - http.enabled=false
-      - bootstrap.memory_lock=true
+      - node.ingest=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "discovery.zen.ping.unicast.hosts=master01,master02"
+      - xpack.security.enabled=false
+      - "discovery.zen.ping.unicast.hosts=data01, data02, data03, data04, client01, master01, master02"
     networks:
       - esnet
+    ports:
+      - 9203:9200
+      - 9303:9300
 
 volumes:
   esdata1:
