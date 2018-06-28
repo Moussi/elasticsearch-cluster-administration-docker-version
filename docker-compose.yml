@@ -1,0 +1,75 @@
+version: '2.2'
+services:
+  data01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
+    container_name: data01
+    environment:
+      - cluster.name=mappy-cluster
+      - node.name=data01
+      - node.data=true
+      - node.master=false
+      - node.client=false
+      - http.enabled=false
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - esnet
+  data02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
+    container_name: data02
+    environment:
+      - cluster.name=mappy-cluster
+      - node.name=data02
+      - node.data=true
+      - node.master=false
+      - node.client=false
+      - http.enabled=false
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.zen.ping.unicast.hosts=data01"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata2:/usr/share/elasticsearch/data
+    networks:
+      - esnet
+  data03:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
+    container_name: data03
+    environment:
+      - cluster.name=mappy-cluster
+      - node.name=data03
+      - node.data=true
+      - node.master=false
+      - node.client=false
+      - http.enabled=false
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.zen.ping.unicast.hosts=data01"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata2:/usr/share/elasticsearch/data
+    networks:
+      - esnet
+
+volumes:
+  esdata1:
+    driver: local
+  esdata2:
+    driver: local
+
+networks:
+  esnet:
