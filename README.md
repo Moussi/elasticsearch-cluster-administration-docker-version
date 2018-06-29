@@ -6,7 +6,7 @@ This cluster contains
 * 3 master nodes
 * 1 client node  
 
-For more détails about the settings please read my [linkedin article about elastic cluster administration](http://linkedin.com).
+For more détails about the settings please read my [linkedin article about elastic cluster administration](https://www.linkedin.com/pulse/administrating-elasticsearch-cluster-tips-reflexes-aymen-moussi/).
 
 To run the cluster:
 
