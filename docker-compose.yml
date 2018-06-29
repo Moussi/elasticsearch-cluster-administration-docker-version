@@ -12,8 +12,8 @@ services:
       - xpack.security.enabled=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - "discovery.zen.ping.unicast.hosts=master03,data01,data02,data03,data04,master01,master02"
-      - "watcher.http.default_connection_timeout=30"
-      - "watcher.http.default_read_timeout=60"
+      - xpack.http.default_connection_timeout=30s
+      - xpack.http.default_read_timeout=60s
     ports:
       - 9200:9200
       - 9300:9300
